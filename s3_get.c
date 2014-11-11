@@ -1,6 +1,6 @@
 /**
  * s3_get.c
- * S3上のファイルをHTTP GETするコマンド
+ * command to get HTTP content on Amazon S3
  *
  * Usage:
  *  s3_get bucketname key/dir/file.txt > file.txt
@@ -10,9 +10,6 @@
 #include <string.h>
 #include <curl/curl.h>
 
-/**
- * ダウンロードに失敗できる上限
- */
 #define COUNT_FAILED_MAX 5
 
 typedef struct {
