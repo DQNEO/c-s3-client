@@ -5,4 +5,4 @@ s3_get: s3_get.c http_client.c
 
 .PHONY: clean
 clean:
-	rm s3_get
+	rm -f s3_get
