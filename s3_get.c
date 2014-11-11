@@ -6,6 +6,7 @@
  *  s3_get bucketname key/dir/file.txt > file.txt
  */
 #include <stdio.h>
+#include <stdlib.h>
 #include "http_client.h"
 #include <openssl/hmac.h>
 #include <glib.h>
@@ -86,12 +87,19 @@ int main(int argc, char **argv)
     char *bucket = argv[1];
     char *key = argv[2];
 
+    struct Credential *pcrd;
     struct Credential crd;
 
-    crd.accesskeyid = "AKIA***********";
-    crd.secretaccesskey = "1KuIp*************";
+    crd.accesskeyid = getenv("AWS_ACCESS_KEY_ID");
+    crd.secretaccesskey = getenv("AWS_SECRET_ACCESS_KEY");
 
-    HTTPResponse *response = s3_get_object(bucket, key, NULL);
+    if (crd.accesskeyid == NULL) {
+        pcrd = NULL;
+    } else {
+        pcrd = &crd;
+    }
+
+    HTTPResponse *response = s3_get_object(bucket, key, pcrd);
     if (!response) {
         return 1;
     }
