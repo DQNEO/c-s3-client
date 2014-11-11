@@ -18,17 +18,18 @@ char *s3_generate_authorization(const char *cat_header, const char *secretkey)
 HTTPResponse *s3_get_object(const char *bucket, const char *key, struct Credential *crd)
 {
     char url[512];
-    char path_style_resource[1024];
-    char date[512];
-    char cat_header[1024];
-    char signature[1024];
-
-    char h_date[512];
-    struct curl_slist *slist = NULL;
-
     sprintf(url,"https://%s/%s/%s", S3_TOKYO_ENDPOINT, bucket, key);
 
+    struct curl_slist *slist = NULL;
+    HTTPResponse *response;
+
     if (crd != NULL) {
+        char path_style_resource[1024];
+        char date[512];
+        char cat_header[1024];
+        char signature[1024];
+
+        char h_date[512];
         sprintf(path_style_resource,"/%s/%s", bucket, key);
 
         time_t t = time(NULL);
@@ -46,9 +47,11 @@ HTTPResponse *s3_get_object(const char *bucket, const char *key, struct Credenti
 
         slist = curl_slist_append(slist, h_date);
         slist = curl_slist_append(slist, signature);
+        response = http_get_content(url, slist);
+    } else {
+        response = http_get_content(url, NULL);
     }
 
-    HTTPResponse *response = http_get_content(url, slist);
     return response;
 }
 
