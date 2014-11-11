@@ -52,23 +52,25 @@ HTTPResponse *s3_get_object(const char *bucket, const char *key, struct Credenti
 
     sprintf(url,"https://%s/%s/%s", S3_TOKYO_ENDPOINT, bucket, key);
 
-    sprintf(path_style_resource,"/%s/%s", bucket, key);
+    if (crd != NULL) {
+        sprintf(path_style_resource,"/%s/%s", bucket, key);
 
-    time_t t = time(NULL);
-    struct tm *tm = gmtime(&t);
-    strftime(date, BUFF_LENGTH, "%a, %d %b %Y %H:%M:%S +0000", tm);
+        time_t t = time(NULL);
+        struct tm *tm = gmtime(&t);
+        strftime(date, BUFF_LENGTH, "%a, %d %b %Y %H:%M:%S +0000", tm);
 
-    //sprintf(cat_header, "GET\n\n\n%s\nx-amz-security-token:\n%s\n%s", date, token, path_style_resource);
+        //sprintf(cat_header, "GET\n\n\n%s\nx-amz-security-token:\n%s\n%s", date, token, path_style_resource);
 
-    sprintf(cat_header, "GET\n\n\n%s\n%s", date, path_style_resource);
+        sprintf(cat_header, "GET\n\n\n%s\n%s", date, path_style_resource);
 
-    char *authorization = aws_get_authorization_string(cat_header, crd->secretaccesskey);
-    sprintf(signature, "Authorization: AWS %s:%s", crd->accesskeyid, authorization);
+        char *authorization = aws_get_authorization_string(cat_header, crd->secretaccesskey);
+        sprintf(signature, "Authorization: AWS %s:%s", crd->accesskeyid, authorization);
 
-    sprintf(h_date, "Date: %s", date);
+        sprintf(h_date, "Date: %s", date);
 
-    slist = curl_slist_append(slist, h_date);
-    slist = curl_slist_append(slist, signature);
+        slist = curl_slist_append(slist, h_date);
+        slist = curl_slist_append(slist, signature);
+    }
 
     HTTPResponse *response = http_get_content(url, slist);
     return response;
@@ -89,7 +91,7 @@ int main(int argc, char **argv)
     crd.accesskeyid = "AKIA***********";
     crd.secretaccesskey = "1KuIp*************";
 
-    HTTPResponse *response = s3_get_object(bucket, key, &crd);
+    HTTPResponse *response = s3_get_object(bucket, key, NULL);
     if (!response) {
         return 1;
     }
