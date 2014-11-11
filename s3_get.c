@@ -11,6 +11,12 @@
 #include <glib.h>
 #define BUFF_LENGTH 1024
 
+struct Credential
+{
+    const char *accesskeyid;
+    const char *secretaccesskey;
+};
+
 void usage()
 {
     printf("Usage:\n  s3_get bucketname key/dir/file.txt > file.txt\n");
@@ -36,23 +42,22 @@ char *aws_get_authorization_string(const char *cat_header, const char *secretkey
 HTTPResponse *s3_get_object(const char *bucket, const char *key)
 {
     char url[512];
-
-    sprintf(url,"https://%s/%s/%s", S3_TOKYO_ENDPOINT, bucket, key);
-
     char path_style_resource[1024];
-    sprintf(path_style_resource,"/%s/%s", bucket, key);
-
-    struct curl_slist *slist = NULL;
-
-    // 取得したcredentialsを使ってsignatureを作成
     char date[512];
     char cat_header[1024];
     char signature[1024];
 
-    char *accesskeyid = "AKIA***********";
-    char *secretaccesskey = "1KuIp*************";
+    struct Credential crd;
+
+    crd.accesskeyid = "AKIA***********";
+    crd.secretaccesskey = "1KuIp*************";
 
     char h_date[512];
+    struct curl_slist *slist = NULL;
+
+    sprintf(url,"https://%s/%s/%s", S3_TOKYO_ENDPOINT, bucket, key);
+
+    sprintf(path_style_resource,"/%s/%s", bucket, key);
 
     time_t t = time(NULL);
     struct tm *tm = gmtime(&t);
@@ -62,8 +67,8 @@ HTTPResponse *s3_get_object(const char *bucket, const char *key)
 
     sprintf(cat_header, "GET\n\n\n%s\n%s", date, path_style_resource);
 
-    char *authorization = aws_get_authorization_string(cat_header, secretaccesskey);
-    sprintf(signature, "Authorization: AWS %s:%s", accesskeyid, authorization);
+    char *authorization = aws_get_authorization_string(cat_header, crd.secretaccesskey);
+    sprintf(signature, "Authorization: AWS %s:%s", crd.accesskeyid, authorization);
 
     sprintf(h_date, "Date: %s", date);
 
