@@ -16,6 +16,18 @@ void usage()
 
 #define S3_TOKYO_ENDPOINT "s3-ap-northeast-1.amazonaws.com"
 
+HTTPResponse *s3_get(const char *bucket, const char *key)
+{
+    char url[512];
+    sprintf(url,"https://%s/%s/%s", S3_TOKYO_ENDPOINT, bucket, key);
+
+    struct curl_slist *slist = NULL;
+
+    HTTPResponse *response = http_get_content(url, slist);
+    return response;
+}
+
+
 int main(int argc, char **argv)
 {
     if (argc < 3) {
@@ -25,13 +37,7 @@ int main(int argc, char **argv)
     char *bucket = argv[1];
     char *key = argv[2];
 
-    char url[512];
-
-    sprintf(url,"https://%s/%s/%s", S3_TOKYO_ENDPOINT, bucket, key);
-
-    struct curl_slist *slist = NULL;
-
-    HTTPResponse *response = http_get_content(url, slist);
+    HTTPResponse *response = s3_get(bucket, key);
     if (!response) {
         return 1;
     }
