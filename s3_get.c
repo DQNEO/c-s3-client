@@ -39,18 +39,13 @@ char *aws_get_authorization_string(const char *cat_header, const char *secretkey
     return g_base64_encode(MD, len);
 }
 
-HTTPResponse *s3_get_object(const char *bucket, const char *key)
+HTTPResponse *s3_get_object(const char *bucket, const char *key, struct Credential *crd)
 {
     char url[512];
     char path_style_resource[1024];
     char date[512];
     char cat_header[1024];
     char signature[1024];
-
-    struct Credential crd;
-
-    crd.accesskeyid = "AKIA***********";
-    crd.secretaccesskey = "1KuIp*************";
 
     char h_date[512];
     struct curl_slist *slist = NULL;
@@ -67,8 +62,8 @@ HTTPResponse *s3_get_object(const char *bucket, const char *key)
 
     sprintf(cat_header, "GET\n\n\n%s\n%s", date, path_style_resource);
 
-    char *authorization = aws_get_authorization_string(cat_header, crd.secretaccesskey);
-    sprintf(signature, "Authorization: AWS %s:%s", crd.accesskeyid, authorization);
+    char *authorization = aws_get_authorization_string(cat_header, crd->secretaccesskey);
+    sprintf(signature, "Authorization: AWS %s:%s", crd->accesskeyid, authorization);
 
     sprintf(h_date, "Date: %s", date);
 
@@ -89,7 +84,12 @@ int main(int argc, char **argv)
     char *bucket = argv[1];
     char *key = argv[2];
 
-    HTTPResponse *response = s3_get_object(bucket, key);
+    struct Credential crd;
+
+    crd.accesskeyid = "AKIA***********";
+    crd.secretaccesskey = "1KuIp*************";
+
+    HTTPResponse *response = s3_get_object(bucket, key, &crd);
     if (!response) {
         return 1;
     }
