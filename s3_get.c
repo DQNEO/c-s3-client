@@ -29,11 +29,11 @@ int main(int argc, char **argv)
 
     sprintf(url,"https://%s/%s/%s", S3_TOKYO_ENDPOINT, bucket ,key);
 
-    HTTPResponse *image_blob = http_get_content(url, NULL);
-    if (!image_blob) {
+    HTTPResponse *response = http_get_content(url, NULL);
+    if (!response) {
         return 1;
     }
 
-    fwrite(image_blob->body, image_blob->size, 1,stdout);
+    fwrite(response->body, response->size, 1,stdout);
     return 0;
 }
