@@ -1,6 +1,6 @@
 #include "s3_client.h"
 
-char *s3_generate_authorization(const char *cat_header, const char *secretkey)
+char *generate_authorization(const char *cat_header, const char *secretkey)
 {
 
     HMAC_CTX ctx;
@@ -34,7 +34,7 @@ struct curl_slist *prepare_headers(const char *bucket, const char *key, struct C
 
         sprintf(cat_header, "GET\n\n\n%s\n%s", date, path_style_resource);
 
-        char *authorization = s3_generate_authorization(cat_header, crd->secretaccesskey);
+        char *authorization = generate_authorization(cat_header, crd->secretaccesskey);
         sprintf(signature, "Authorization: AWS %s:%s", crd->accesskeyid, authorization);
 
         sprintf(h_date, "Date: %s", date);
