@@ -52,11 +52,11 @@ HTTPResponse *s3_get_object(const char *bucket, const char *key, struct Credenti
     struct curl_slist *slist;
     HTTPResponse *response;
 
-    if (crd != NULL) {
+    if (crd == NULL) {
+        response = http_get_content(url, NULL);
+    } else {
         slist = prepare_headers(bucket, key, crd);
         response = http_get_content(url, slist);
-    } else {
-        response = http_get_content(url, NULL);
     }
 
     return response;
