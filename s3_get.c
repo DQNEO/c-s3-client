@@ -33,7 +33,7 @@ char *aws_get_authorization_string(const char *cat_header, const char *secretkey
     return g_base64_encode(MD, len);
 }
 
-HTTPResponse *s3_get(const char *bucket, const char *key)
+HTTPResponse *s3_get_object(const char *bucket, const char *key)
 {
     char url[512];
 
@@ -84,7 +84,7 @@ int main(int argc, char **argv)
     char *bucket = argv[1];
     char *key = argv[2];
 
-    HTTPResponse *response = s3_get(bucket, key);
+    HTTPResponse *response = s3_get_object(bucket, key);
     if (!response) {
         return 1;
     }
