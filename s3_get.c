@@ -29,7 +29,9 @@ int main(int argc, char **argv)
 
     sprintf(url,"https://%s/%s/%s", S3_TOKYO_ENDPOINT, bucket ,key);
 
-    HTTPResponse *response = http_get_content(url, NULL);
+    struct curl_slist *slist = NULL;
+
+    HTTPResponse *response = http_get_content(url, slist);
     if (!response) {
         return 1;
     }
