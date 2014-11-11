@@ -26,7 +26,8 @@ void usage()
 
 #define S3_TOKYO_ENDPOINT "s3-ap-northeast-1.amazonaws.com"
 
-char *aws_get_authorization_string(const char *cat_header, const char *secretkey) {
+char *s3_generate_authorization(const char *cat_header, const char *secretkey)
+{
 
     HMAC_CTX ctx;
     unsigned char MD[BUFF_LENGTH];
@@ -64,7 +65,7 @@ HTTPResponse *s3_get_object(const char *bucket, const char *key, struct Credenti
 
         sprintf(cat_header, "GET\n\n\n%s\n%s", date, path_style_resource);
 
-        char *authorization = aws_get_authorization_string(cat_header, crd->secretaccesskey);
+        char *authorization = s3_generate_authorization(cat_header, crd->secretaccesskey);
         sprintf(signature, "Authorization: AWS %s:%s", crd->accesskeyid, authorization);
 
         sprintf(h_date, "Date: %s", date);
