@@ -72,6 +72,8 @@ Memory *http_get_content(const char *url, struct curl_slist *slist) {
     return mem;
 }
 
+#define S3_TOKYO_ENDPOINT "s3-ap-northeast-1.amazonaws.com"
+
 int main(int argc, char **argv)
 {
     if (argc < 3) {
@@ -81,7 +83,9 @@ int main(int argc, char **argv)
     char *bucket = argv[1];
     char *key = argv[2];
 
-    char *url = "https://s3-ap-northeast-1.amazonaws.com/tmpdqneo/dir/public.txt";
+    char url[512];
+
+    sprintf(url,"https://%s/%s/%s", S3_TOKYO_ENDPOINT, bucket ,key);
 
     Memory *image_blob = http_get_content(url, NULL);
     if (!image_blob) {
