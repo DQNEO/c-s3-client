@@ -27,7 +27,7 @@ int main(int argc, char **argv)
 
     char url[512];
 
-    sprintf(url,"https://%s/%s/%s", S3_TOKYO_ENDPOINT, bucket ,key);
+    sprintf(url,"https://%s/%s/%s", S3_TOKYO_ENDPOINT, bucket, key);
 
     struct curl_slist *slist = NULL;
 
@@ -36,6 +36,6 @@ int main(int argc, char **argv)
         return 1;
     }
 
-    fwrite(response->body, response->size, 1,stdout);
+    fwrite(response->body, response->size, 1, stdout);
     return 0;
 }
