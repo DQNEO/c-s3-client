@@ -1,6 +1,6 @@
 #include "http_client.h"
 
-size_t _write_memory_callback(void* ptr, size_t size, size_t nmemb, void* data) {
+size_t write_memory_callback(void* ptr, size_t size, size_t nmemb, void* data) {
 
     if (size * nmemb == 0) {
         return 0;
@@ -30,7 +30,7 @@ HTTPResponse *http_get_content(const char *url, struct curl_slist *slist) {
         CURL *curl = curl_easy_init();
         curl_easy_setopt(curl, CURLOPT_URL, url);
         curl_easy_setopt(curl, CURLOPT_HTTPHEADER, slist);
-        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, _write_memory_callback);
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_memory_callback);
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void* )mem);
 
         if (curl_easy_perform(curl) == CURLE_OK) {
